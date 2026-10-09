@@ -1,0 +1,258 @@
+/* ============================================================
+   MUSICBOND — Chat MVP layout & components
+   Χρησιμοποιεί ΜΟΝΟ τα tokens του comic-theme.css (βλ. DESIGN_BIBLE.md).
+   Flat corkboard/zine αισθητική: όχι gradients, όχι blur shadows.
+   ============================================================ */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: 100vh;
+  background: var(--paper);
+  background-image: radial-gradient(var(--paper-dot) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  border-right: var(--line-bold);
+  display: flex;
+  flex-direction: column;
+  background: var(--paper-white);
+}
+
+.sidebar-header {
+  padding: 18px 16px 14px;
+  border-bottom: var(--line);
+}
+
+.sidebar-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.3em;
+  color: var(--accent-mustard);
+  text-transform: uppercase;
+  text-shadow: -2px 2px 0 var(--ink);
+  margin: 0;
+}
+
+.channel-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.channel-tab {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  border: var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--paper-white);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: var(--shadow-flat-sm);
+}
+
+.channel-tab:hover {
+  transform: translate(-1px, -1px);
+}
+
+.channel-tab.active {
+  background: var(--accent-mustard);
+  color: var(--paper-white);
+}
+
+.sidebar-footer {
+  border-top: var(--line);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sidebar-username {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85em;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Main chat area ---- */
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.chat-header {
+  padding: 16px 24px;
+  border-bottom: var(--line-bold);
+  background: var(--paper-white);
+}
+
+.chat-header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2em;
+  color: var(--ink);
+}
+
+.chat-header p {
+  margin: 2px 0 0;
+  font-size: 0.85em;
+  color: var(--ink-soft);
+}
+
+.chat-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.chat-row {
+  max-width: 640px;
+}
+
+.chat-row-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.chat-row-user {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.chat-row-time {
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  color: var(--ink-soft);
+}
+
+.chat-row-body {
+  background: var(--paper-white);
+  border: var(--line);
+  border-radius: var(--radius-bubble);
+  box-shadow: var(--shadow-flat-sm);
+  padding: 8px 12px;
+  font-size: 0.95em;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chat-empty {
+  margin: auto;
+  font-family: var(--font-mono);
+  color: var(--ink-soft);
+  font-size: 0.9em;
+}
+
+.chat-input-bar {
+  display: flex;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: var(--line-bold);
+  background: var(--paper-white);
+}
+
+.chat-input-bar input {
+  flex: 1;
+  padding: 11px 14px;
+  border: var(--line);
+  border-radius: var(--radius-panel);
+  font-family: var(--font-body);
+  font-size: 0.95em;
+  background: var(--paper);
+  outline: none;
+}
+
+/* ---- Ιστορίες τραγουδιών (σύνδεση με «Ταξίδι στη Μουσική») ---- */
+.sidebar-section {
+  margin: 10px 2px 2px;
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.sidebar-section:first-child {
+  margin-top: 0;
+}
+
+.story-tab {
+  font-family: var(--font-body);
+  font-size: 0.82em;
+  line-height: 1.3;
+  border-style: dashed;
+}
+
+.story-tab.active {
+  background: var(--accent-teal);
+  border-style: solid;
+}
+
+.sidebar-error {
+  font-size: 0.75em;
+  color: var(--accent-red);
+  margin: 6px 2px 0;
+}
+
+.chat-header-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.7em !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent-teal) !important;
+  margin: 0 0 2px !important;
+}
+
+.story-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  color: var(--accent-pink);
+}
+
+/* ---- Κινητό: το sidebar πάει πάνω, οριζόντια ---- */
+@media (max-width: 720px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .sidebar {
+    border-right: none;
+    border-bottom: var(--line-bold);
+    max-height: 38vh;
+  }
+  .chat-main {
+    min-height: 0;
+  }
+  .chat-scroll,
+  .chat-header,
+  .chat-input-bar {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}

@@ -1,0 +1,54 @@
+/* ============================================
+   MUSICBOND — Base styles
+   Η οπτική ταυτότητα ορίζεται στο styles/comic-theme.css
+   και τεκμηριώνεται στο DESIGN_BIBLE.md (διάβασέ το πριν
+   αλλάξεις οτιδήποτε οπτικό!)
+   ============================================ */
+
+@import './styles/comic-theme.css';
+@import './styles/chat.css';
+@import './styles/motion.css';
+@import './styles/theme-archive.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background-color: var(--paper);
+  /* Παλιωμένο χαρτί με grain/xerox κουκκίδες — η "σελίδα" του flyer/zine */
+  background-image: radial-gradient(var(--paper-dot) 1px, transparent 1px);
+  background-size: 16px 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: 1px;
+}
+
+a {
+  color: var(--ink);
+  font-weight: bold;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}

@@ -1,0 +1,193 @@
+/* ============================================================
+   MUSICBOND — "CULT 80-90-00" THEME — Design Tokens & Utilities
+   (αρχείο: comic-theme.css — ιστορικό όνομα, το στυλ ΔΕΝ είναι
+   πλέον comic-book. Βλ. DESIGN_BIBLE.md για την πλήρη κατεύθυνση.)
+
+   Έμπνευση: φωτοτυπημένα fanzines, εξώφυλλα VHS, J-cards
+   mixtapes, gig posters DIY hardcore/punk ετικετών, βινύλια
+   φθαρμένα στις άκρες, το πρώιμο MySpace/Xanga.
+   ============================================================ */
+
+/* Γραμματοσειρές (όλες υποστηρίζουν ελληνικούς χαρακτήρες):
+   - Oswald: condensed poster/flyer τίτλοι (αντί για Bangers)
+   - IBM Plex Mono: "typewriter" ετικέτες, tags, μικρο-κείμενο (αντί για SFX)
+   - Inter: σώμα κειμένου, καθαρό και ευανάγνωστο (αντί για Comic Sans) */
+
+:root {
+  /* ---- Χρώματα: Φθαρμένο χαρτί + risograph/xerox παλέτα ---- */
+  --paper: #ede3ca;          /* παλιωμένο χαρτί/kraft, όχι φωτεινό κίτρινο */
+  --paper-dot: #ddcfa8;      /* κουκκίδες grain/xerox noise στο φόντο */
+  --paper-white: #f7f2e4;    /* εσωτερικό καρτών — "ξεθωριασμένο λευκό", ποτέ #fff καθαρό */
+  --ink: #1c1a17;            /* μελάνι — ζεστό σχεδόν-μαύρο, όχι #000 */
+  --ink-soft: #4a453d;
+  --tape: rgba(232, 223, 192, 0.7); /* διάφανη κολλητική ταινία */
+
+  /* ---- Accent παλέτα: λίγα, ξεθωριασμένα χρώματα — ΟΧΙ neon cartoon ---- */
+  --accent-red: #b7302f;     /* κασέτα / live / έκτακτο */
+  --accent-pink: #a83a63;    /* riso μαγέντα — κύρια CTA */
+  --accent-orange: #c46a28;  /* xerox πορτοκαλί — δευτερεύον */
+  --accent-teal: #327d74;    /* ξεθωριασμένο τιρκουάζ */
+  --accent-violet: #654a92;  /* mixtape βιολετί */
+  --accent-mustard: #b9932a; /* ξεθωριασμένο χρυσό — τίτλοι */
+
+  /* ---- Music DNA Colors (πιο μουντές εκδοχές — ίδια λογική, όχι neon) ---- */
+  --dna-rock: #b7302f;
+  --dna-jazz: #33588f;
+  --dna-electronic: #5c8f4a;
+  --dna-classical: #b9932a;
+  --dna-melancholic: #327d74;
+
+  /* ---- Μελάνι: Περιγράμματα & Σκιές (λεπτότερα από το comic) ---- */
+  --line: 2px solid var(--ink);
+  --line-bold: 3px solid var(--ink);
+  --shadow-flat: 3px 3px 0 var(--ink);        /* flat offset — σαν κολλημένο sticker, όχι blur */
+  --shadow-flat-sm: 2px 2px 0 var(--ink);
+  --shadow-flat-lg: 5px 5px 0 var(--ink-soft);
+
+  /* ---- Γεωμετρία: πιο κοφτερή/photocopy, λιγότερη "χαριτωμένη" στρογγυλάδα ---- */
+  --radius-panel: 6px;
+  --radius-bubble: 8px;
+  --radius-pill: 999px;   /* κρατιέται μόνο για μικρά ticket/badge tags */
+
+  /* ---- Τυπογραφία ---- */
+  --font-display: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+
+/* Πάνελ/κάρτα: φωτοτυπημένο, όχι comic panel */
+.comic-panel {
+  background: var(--paper-white);
+  border: var(--line-bold);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-flat);
+  padding: 20px;
+}
+
+/* Ελαφριά κλίση — τίποτα δεν είναι perfectly aligned, σαν κολλημένο flyer */
+.tilt-left { transform: rotate(-1deg); }
+.tilt-right { transform: rotate(1deg); }
+
+/* "Κολλητική ταινία" σε γωνίες — σαν φωτογραφία/flyer κολλημένο σε τοίχο.
+   Χρειάζεται position:relative στο container. */
+.taped { position: relative; }
+.taped::before,
+.taped::after {
+  content: '';
+  position: absolute;
+  top: -13px;
+  width: 54px;
+  height: 24px;
+  background: var(--tape);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
+  z-index: 2;
+}
+.taped::before { left: -8px; transform: rotate(-7deg); }
+.taped::after { right: -8px; transform: rotate(6deg); }
+
+/* Συννεφάκι/ετικέτα μηνύματος — σαν χειρόγραφο σημείωμα σε περιθώριο,
+   όχι comic speech bubble */
+.speech-bubble {
+  position: relative;
+  display: inline-block;
+  background: var(--paper-white);
+  border: var(--line);
+  border-radius: var(--radius-bubble);
+  box-shadow: var(--shadow-flat-sm);
+  padding: 10px 14px;
+  font-weight: 600;
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  bottom: -10px;
+  width: 12px;
+  height: 12px;
+  background: var(--paper-white);
+  border-left: var(--line);
+  border-bottom: var(--line);
+  transform: rotate(-45deg);
+}
+
+.thought-bubble {
+  border-radius: 14px;
+  border-style: dashed;
+}
+
+/* Ετικέτα τύπου "stamp"/ticket-stub — αντί για SFX ονοματοποιίες (POW!) */
+.sfx {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  background: var(--paper-white);
+  border: var(--line);
+  box-shadow: var(--shadow-flat-sm);
+  padding: 3px 10px;
+  font-size: 0.85em;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+}
+.sfx--red { background: var(--accent-red); color: var(--paper-white); }
+.sfx--teal { background: var(--accent-teal); color: var(--paper-white); }
+
+/* Grain/xerox noise επιφάνεια — για hero sections, μεγάλες επιφάνειες */
+.halftone {
+  background-image: radial-gradient(var(--paper-dot) 1.2px, transparent 1.2px);
+  background-size: 10px 10px;
+}
+
+/* Τίτλος poster/flyer: condensed, με "χοντρό" μελάνι offset shadow */
+.comic-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--accent-mustard);
+  text-shadow: -3px 3px 0 var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Ticket/badge pill — π.χ. "MEMBERS ONLY", κατηγορίες */
+.comic-kicker {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  border: var(--line);
+  background: var(--paper-white);
+  box-shadow: var(--shadow-flat-sm);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-size: 0.78em;
+}
+
+/* ============================================================
+   ANIMATIONS — πιο ήπιες από το comic "pop": σαν κολλάει sticker,
+   όχι cartoon bounce
+   ============================================================ */
+
+@keyframes pow-pop {
+  0% { transform: scale(0.85) rotate(-4deg); opacity: 0; }
+  100% { transform: scale(1) rotate(-4deg); opacity: 1; }
+}
+
+@keyframes bubble-in {
+  0% { transform: translateY(6px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+.animate-pop { animation: pow-pop 0.18s ease-out both; }
+.animate-bubble { animation: bubble-in 0.18s ease-out both; }
+.animate-wiggle { animation: wiggle 1.4s ease-in-out infinite; }

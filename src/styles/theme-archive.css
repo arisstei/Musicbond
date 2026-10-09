@@ -1,0 +1,302 @@
+/* ============================================================
+   MUSICBOND — "ARCHIVE NOIR" θέμα
+   Έμπνευση: σκοτεινή αίθουσα αρχείου/μουσείου — εκθέματα κάτω από
+   προβολέα, χρυσές λεπτές γραμμές, σκαλιστά κεφαλαία, κείμενο
+   γραφομηχανής. Το Musicbond ως «αρχείο της μουσικής κοινότητας».
+   Κάνει override τα tokens του comic-theme.css, άρα όλα τα
+   components αλλάζουν αυτόματα.
+
+   Γραμματοσειρές — ΟΛΕΣ με ελληνικά:
+   - Noto Serif Display: σκαλιστοί τίτλοι σε κεφαλαία
+   - EB Garamond: σώμα κειμένου & πλάγια taglines
+   - Anonymous Pro: ετικέτες «γραφομηχανής»
+   ============================================================ */
+
+:root {
+  /* ---- Αίθουσα: σχεδόν μαύρο, ζεστό ---- */
+  --paper: #121110;                       /* φόντο αίθουσας */
+  --paper-dot: rgba(212, 197, 169, 0.035);
+  --paper-white: #1a1815;                 /* επιφάνεια «εκθέματος» */
+  --ink: #d4c5a9;                         /* περγαμηνή — κείμενο */
+  --ink-soft: rgba(212, 197, 169, 0.62);
+  --tape: rgba(184, 153, 71, 0.9);        /* τώρα: ορειχάλκινες γωνίες */
+
+  /* ---- Ορείχαλκος/χρυσό + σβησμένα χρώματα αρχείου ---- */
+  --gold: #b89947;
+  --gold-bright: #d8b95e;
+  --gold-hair: rgba(184, 153, 71, 0.38);
+  --accent-mustard: #b89947;
+  --accent-red: #b5473a;
+  --accent-pink: #b0566f;
+  --accent-orange: #c07a3c;
+  --accent-teal: #6aa396;
+  --accent-violet: #8c77b3;
+
+  /* ---- Γραμμές: λεπτές χρυσές, όχι χοντρό μελάνι ---- */
+  --line: 1px solid var(--gold-hair);
+  --line-bold: 1px solid var(--gold);
+  --shadow-flat: 0 14px 34px -16px rgba(0, 0, 0, 0.9);
+  --shadow-flat-sm: 0 6px 16px -10px rgba(0, 0, 0, 0.9);
+  --shadow-flat-lg: 0 26px 60px -24px rgba(0, 0, 0, 0.95);
+
+  --radius-panel: 2px;
+  --radius-bubble: 2px;
+
+  --font-display: 'Noto Serif Display', 'GFS Didot', Georgia, serif;
+  --font-body: 'EB Garamond', Georgia, serif;
+  --font-mono: 'Anonymous Pro', 'Courier New', monospace;
+}
+
+/* ---------- Αίθουσα + προβολέας ---------- */
+body {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 50% -8%, rgba(216, 185, 94, 0.14), transparent 70%),
+    radial-gradient(ellipse at 50% 120%, rgba(0, 0, 0, 0.6), transparent 60%);
+  background-size: auto;
+  font-size: 17px;
+}
+
+/* κώνος φωτός από προβολέα — τρεμοπαίζει ελάχιστα σαν παλιά λάμπα */
+body::before {
+  content: '';
+  position: fixed;
+  top: -5vh;
+  left: 50%;
+  width: 70vw;
+  height: 85vh;
+  transform: translateX(-50%);
+  clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+  background: linear-gradient(to bottom, rgba(216, 185, 94, 0.16), rgba(216, 185, 94, 0.03) 70%, transparent);
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: 0;
+  animation: lamp-flicker 7s steps(1) infinite;
+}
+
+#root { position: relative; z-index: 1; }
+
+@keyframes lamp-flicker {
+  0%, 100% { opacity: 1; }
+  47% { opacity: 0.86; }
+  48% { opacity: 1; }
+  71% { opacity: 0.93; }
+  72% { opacity: 1; }
+}
+
+.grain-overlay {
+  mix-blend-mode: overlay;
+  opacity: 0.12;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+}
+
+::selection { background: var(--gold); color: #121110; }
+
+/* ---------- «Ταινία» → ορειχάλκινες γωνίες κορνίζας ---------- */
+.taped::before,
+.taped::after {
+  top: -6px;
+  width: 26px;
+  height: 26px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  border-top: 2px solid var(--gold);
+  transform: none;
+}
+.taped::before { left: -6px;  border-left: 2px solid var(--gold); }
+.taped::after  { right: -6px; border-right: 2px solid var(--gold); }
+
+/* ---------- Layout chat ---------- */
+.app-shell {
+  background: transparent;
+  background-image: none;
+}
+
+.sidebar {
+  background: rgba(18, 17, 16, 0.92);
+  border-right: 1px solid var(--gold-hair);
+}
+
+.sidebar-header {
+  border-bottom: 1px solid var(--gold-hair);
+}
+
+.sidebar-header h1 {
+  font-size: 1.05em;
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+  text-shadow: none;
+}
+
+.sidebar-section {
+  color: var(--gold);
+  letter-spacing: 0.3em;
+}
+
+.channel-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.channel-tab:hover {
+  transform: translateX(3px);
+  box-shadow: none;
+  border-color: var(--gold-hair);
+  color: var(--ink);
+}
+
+.channel-tab.active {
+  background: linear-gradient(90deg, rgba(184, 153, 71, 0.2), transparent);
+  border: 1px solid var(--gold-hair);
+  border-left: 2px solid var(--gold);
+  color: var(--gold-bright);
+}
+
+.story-tab { font-family: var(--font-body); font-style: italic; font-size: 0.95em; }
+.story-tab.active { background: linear-gradient(90deg, rgba(106, 163, 150, 0.18), transparent); border-left-color: var(--accent-teal); }
+
+.sidebar-footer { border-top: 1px solid var(--gold-hair); }
+.sidebar-username { color: var(--gold-bright); letter-spacing: 0.1em; }
+
+.chat-header {
+  background: rgba(18, 17, 16, 0.85);
+  border-bottom: 1px solid var(--gold-hair);
+  text-align: center;
+}
+
+.chat-header h2 {
+  font-size: 1.35em;
+  letter-spacing: 0.24em;
+  color: var(--ink);
+}
+
+.chat-header p {
+  font-family: var(--font-body);
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.chat-header-kicker { color: var(--gold) !important; letter-spacing: 0.3em !important; }
+.story-link { color: var(--gold-bright); }
+
+/* διακοσμητικό «◆» διαχωριστικό κάτω από τον τίτλο του καναλιού */
+.chat-header h2::after {
+  content: '— ◆ —';
+  display: block;
+  font-size: 0.45em;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  margin-top: 4px;
+}
+
+.ticker {
+  background: transparent;
+  color: var(--gold);
+  border-top: 1px solid var(--gold-hair);
+  border-bottom: 1px solid var(--gold-hair);
+  letter-spacing: 0.25em;
+  text-align: left;
+}
+
+/* ---------- Μηνύματα: κάρτες αρχείου με χρυσές γωνίες ---------- */
+.chat-scroll {
+  padding-top: 28px;
+}
+
+.chat-row-body {
+  position: relative;
+  background: rgba(26, 24, 21, 0.92);
+  border: 1px solid rgba(212, 197, 169, 0.1);
+  box-shadow: var(--shadow-flat);
+  font-family: var(--font-body);
+  font-size: 1.08em;
+  color: var(--ink);
+  padding: 10px 16px;
+}
+
+/* ορειχάλκινες γωνίες σε κάθε κάρτα */
+.chat-row-body::before,
+.chat-row-body::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.8;
+}
+.chat-row-body::before { top: -1px;    left: -1px;  border-width: 1px 0 0 1px; }
+.chat-row-body::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+.chat-row:hover .chat-row-body {
+  box-shadow: 0 0 0 1px var(--gold-hair), 0 16px 36px -14px rgba(216, 185, 94, 0.25);
+}
+
+.chat-row-user { letter-spacing: 0.14em; }
+.chat-row-time { color: var(--ink-soft); }
+.chat-empty { font-family: var(--font-body); font-style: italic; font-size: 1.05em; letter-spacing: 0.05em; }
+
+.chat-input-bar {
+  background: rgba(18, 17, 16, 0.92);
+  border-top: 1px solid var(--gold-hair);
+}
+
+.chat-input-bar input {
+  background: #0e0d0c;
+  color: var(--ink);
+  border: 1px solid var(--gold-hair);
+  font-family: var(--font-body);
+  font-size: 1.05em;
+}
+
+.chat-input-bar input::placeholder { color: rgba(212, 197, 169, 0.35); font-style: italic; }
+.chat-input-bar input:focus { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 0 22px -6px rgba(216, 185, 94, 0.45); }
+
+/* σφραγίδα → χρυσή σφραγίδα βουλοκεριού */
+.stamp-btn {
+  background: transparent;
+  color: var(--gold-bright);
+  border: 1px solid var(--gold);
+  box-shadow: none;
+  letter-spacing: 0.3em;
+  transform: none;
+}
+.stamp-btn:hover {
+  transform: none;
+  background: var(--gold);
+  color: #121110;
+  box-shadow: 0 0 24px -6px rgba(216, 185, 94, 0.6);
+}
+
+/* ---------- Βινύλιο: χρυσή ετικέτα ---------- */
+.vinyl {
+  border: 1px solid var(--gold);
+  background:
+    radial-gradient(circle, #121110 0 2px, var(--gold) 2.5px 6px, #0b0a09 6.5px),
+    #0b0a09;
+  box-shadow: 0 0 18px -4px rgba(216, 185, 94, 0.35);
+}
+
+.eq span { background: var(--gold) !important; opacity: 0.85; }
+.eq span:nth-child(even) { background: var(--gold-bright) !important; opacity: 0.6; }
+
+/* ---------- Loading ---------- */
+.vhs-loading { color: var(--gold); letter-spacing: 0.4em; }
+
+/* ---------- Sidebar κινητού ---------- */
+@media (max-width: 720px) {
+  .sidebar { border-bottom: 1px solid var(--gold-hair); }
+  .chat-header { text-align: left; }
+}

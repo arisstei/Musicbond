@@ -1,0 +1,142 @@
+From 99cebba8a780caf24f18b1db74bbbb2409c86af0 Mon Sep 17 00:00:00 2001
+From: arisstei <arisstei@gmail.com>
+Date: Sun, 27 Sep 2026 00:29:18 +0300
+Subject: [PATCH] =?UTF-8?q?=CE=A3=CF=8D=CE=BD=CE=B4=CE=B5=CF=83=CE=B7=20?=
+ =?UTF-8?q?=CE=BC=CE=B5=20Musicbond:=20=CE=B4=CE=B7=CE=BC=CF=8C=CF=83?=
+ =?UTF-8?q?=CE=B9=CE=BF=20/api/songs=20feed=20+=20=CE=BA=CE=BF=CF=85=CE=BC?=
+ =?UTF-8?q?=CF=80=CE=AF=20=C2=AB=CE=A3=CF=85=CE=B6=CE=AE=CF=84=CE=B7=CF=83?=
+ =?UTF-8?q?=CE=AD=20=CF=84=CE=BF=C2=BB=20=CE=B1=CE=BD=CE=AC=20=CF=84=CF=81?=
+ =?UTF-8?q?=CE=B1=CE=B3=CE=BF=CF=8D=CE=B4=CE=B9=20(=CE=B5=CE=BC=CF=86?=
+ =?UTF-8?q?=CE=B1=CE=BD=CE=AF=CE=B6=CE=B5=CF=84=CE=B1=CE=B9=20=CE=BC=CF=8C?=
+ =?UTF-8?q?=CE=BD=CE=BF=20=CE=BC=CE=B5=20NEXT=5FPUBLIC=5FMUSICBOND=5FURL)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ app/api/songs/route.js     | 23 +++++++++++++++++++++++
+ components/SongArticle.jsx | 17 +++++++++++++++++
+ lib/dictionaries.js        | 10 ++++++++++
+ next.config.mjs            | 16 +++++++++++++++-
+ 4 files changed, 65 insertions(+), 1 deletion(-)
+ create mode 100644 app/api/songs/route.js
+
+diff --git a/app/api/songs/route.js b/app/api/songs/route.js
+new file mode 100644
+index 0000000..f281ac3
+--- /dev/null
++++ b/app/api/songs/route.js
+@@ -0,0 +1,23 @@
++import { getAllSongs } from "@/lib/songs";
++import { SITE_URL } from "@/lib/site";
++
++// Δημόσιο, read-only feed των ιστοριών — το διαβάζει το Musicbond για να
++// δείχνει ένα νήμα συζήτησης ανά τραγούδι. Χτίζεται στατικά σε κάθε deploy,
++// οπότε ένα νέο .json στο content/songs/ εμφανίζεται αυτόματα.
++export const dynamic = "force-static";
++
++export function GET() {
++  const songs = getAllSongs().map((s) => ({
++    slug: s.slug,
++    title: s.title,
++    composer: s.composer || null,
++    lyricist: s.lyricist || null,
++    year: s.year || null,
++    teaser: s.teaser || null,
++    status: s.status,
++    isProfile: Boolean(s.isProfile),
++    url: `${SITE_URL}/song/${s.slug}`,
++  }));
++
++  return Response.json({ songs });
++}
+diff --git a/components/SongArticle.jsx b/components/SongArticle.jsx
+index b13f5a7..294498d 100755
+--- a/components/SongArticle.jsx
++++ b/components/SongArticle.jsx
+@@ -3,6 +3,10 @@ import { GradeBadge } from "@/components/GradeBadge";
+ import DiamondDivider from "@/components/DiamondDivider";
+ import { getDictionary } from "@/lib/dictionaries";
+ 
++// Διεύθυνση του Musicbond. Όσο δεν έχει οριστεί (env var στο Vercel), το
++// κουμπί συζήτησης απλά δεν εμφανίζεται — το site δουλεύει όπως πριν.
++const MUSICBOND_URL = process.env.NEXT_PUBLIC_MUSICBOND_URL;
++
+ function toEmbedUrl(url) {
+   if (!url) return null;
+   const watchMatch = url.match(/[?&]v=([^&]+)/);
+@@ -223,6 +227,19 @@ export default function SongArticle({ song, lang = "el" }) {
+         </div>
+       )}
+ 
++      {MUSICBOND_URL && (
++        <section className="mt-12 border border-brand/30 rounded-lg p-5 bg-white/60">
++          <h2 className="font-serif text-lg text-ink mb-2">{t.discuss.heading}</h2>
++          <p className="text-ink/70 text-sm leading-relaxed">{t.discuss.text}</p>
++          <a
++            href={`${MUSICBOND_URL.replace(/\/$/, "")}/?story=${encodeURIComponent(song.slug)}`}
++            className="inline-block mt-3 text-sm font-semibold px-4 py-2 rounded-full border border-brand text-brand transition-all duration-200 hover:bg-brand hover:text-white"
++          >
++            {t.discuss.cta}
++          </a>
++        </section>
++      )}
++
+       {/* Πηγές — κάθε ισχυρισμός εδώ έχει δείξιμη, συνδεδεμένη πηγή.
+           Κανόνας του site: καμία πληροφορία χωρίς αναφορά στο αρχικό site/δημιουργό. */}
+       <section className="mt-12 pt-6 border-t border-black/10">
+diff --git a/lib/dictionaries.js b/lib/dictionaries.js
+index 88b68c8..4984e81 100755
+--- a/lib/dictionaries.js
++++ b/lib/dictionaries.js
+@@ -69,6 +69,11 @@ export const dictionaries = {
+     sourceLabel: "Πηγή:",
+     seeSource: "Δες την πηγή →",
+     sourcesHeading: "Πηγές",
++    discuss: {
++      heading: "Συζήτησέ το",
++      text: "Ξέρεις κάτι παραπάνω γι' αυτό το τραγούδι ή θέλεις απλά να το κουβεντιάσεις; Έλα στο νήμα του στο Musicbond, την κοινότητα για μουσικούς.",
++      cta: "Άνοιξε το νήμα στο Musicbond →",
++    },
+     historicalPhotoLabel: "Ιστορικό ντοκουμέντο",
+     grades: {
+       A: {
+@@ -180,6 +185,11 @@ export const dictionaries = {
+     sourceLabel: "Source:",
+     seeSource: "See the source →",
+     sourcesHeading: "Sources",
++    discuss: {
++      heading: "Talk about it",
++      text: "Know more about this song, or just want to talk about it? Join its thread on Musicbond, the community for musicians.",
++      cta: "Open the thread on Musicbond →",
++    },
+     historicalPhotoLabel: "Historical document",
+     grades: {
+       A: {
+diff --git a/next.config.mjs b/next.config.mjs
+index 4678774..36f794d 100755
+--- a/next.config.mjs
++++ b/next.config.mjs
+@@ -1,4 +1,18 @@
+ /** @type {import('next').NextConfig} */
+-const nextConfig = {};
++const nextConfig = {
++  // Το /api/songs διαβάζεται από το Musicbond (άλλο domain) — επιτρέπουμε CORS.
++  // Είναι δημόσια, read-only δεδομένα, οπότε το "*" είναι ασφαλές εδώ.
++  async headers() {
++    return [
++      {
++        source: "/api/:path*",
++        headers: [
++          { key: "Access-Control-Allow-Origin", value: "*" },
++          { key: "Access-Control-Allow-Methods", value: "GET" },
++        ],
++      },
++    ];
++  },
++};
+ 
+ export default nextConfig;
+-- 
+2.34.1
+
