@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from './lib/supabaseClient'
 import { AuthScreen } from './components/auth/AuthScreen'
 import { ResetPasswordScreen } from './components/auth/ResetPasswordScreen'
@@ -13,11 +13,13 @@ function App() {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [recovering, setRecovering] = useState(false)
+  const userIdRef = useRef(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       if (session) {
+        userIdRef.current = session.user.id
         loadProfile(session.user.id)
       } else {
         setLoading(false)
@@ -30,9 +32,14 @@ function App() {
       if (event === 'PASSWORD_RECOVERY') setRecovering(true)
       setSession(session)
       if (session) {
+        // Refresh του token / επιστροφή στο tab ξαναστέλνουν το ίδιο session:
+        // δεν ξαναφορτώνουμε (αλλιώς το ChatApp κάνει unmount και χάνεται η κατάσταση).
+        if (userIdRef.current === session.user.id) return
+        userIdRef.current = session.user.id
         setLoading(true)
         loadProfile(session.user.id)
       } else {
+        userIdRef.current = null
         setProfile(null)
         setLoading(false)
       }

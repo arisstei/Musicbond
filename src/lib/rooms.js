@@ -69,6 +69,7 @@ export function sanitizeLayout(raw) {
 
 // Δέχεται link YouTube / Spotify / SoundCloud και επιστρέφει ΜΟΝΟ τη διεύθυνση
 // embed που φτιάχνουμε εμείς (ποτέ το ωμό κείμενο του χρήστη στο iframe).
+// Τα embeds YouTube/SoundCloud ξεκινούν αυτόματα· το Spotify δεν έχει autoplay στο embed.
 export function parseMusicLink(input) {
   if (typeof input !== 'string') return null
   let url
@@ -84,12 +85,12 @@ export function parseMusicLink(input) {
     const list = url.searchParams.get('list')
     const id = url.searchParams.get('v')
     if (id && /^[\w-]{11}$/.test(id)) {
-      return { provider: 'youtube', src: `https://www.youtube-nocookie.com/embed/${id}`, height: 220 }
+      return { provider: 'youtube', src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1`, height: 220 }
     }
     if (list && /^[\w-]{10,60}$/.test(list)) {
       return {
         provider: 'youtube',
-        src: `https://www.youtube-nocookie.com/embed/videoseries?list=${list}`,
+        src: `https://www.youtube-nocookie.com/embed/videoseries?list=${list}&autoplay=1&playsinline=1`,
         height: 220,
       }
     }
@@ -98,7 +99,7 @@ export function parseMusicLink(input) {
   if (host === 'youtu.be') {
     const id = url.pathname.slice(1)
     return /^[\w-]{11}$/.test(id)
-      ? { provider: 'youtube', src: `https://www.youtube-nocookie.com/embed/${id}`, height: 220 }
+      ? { provider: 'youtube', src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1`, height: 220 }
       : null
   }
   if (host === 'open.spotify.com') {
@@ -116,7 +117,7 @@ export function parseMusicLink(input) {
     const clean = `https://soundcloud.com${url.pathname}`
     return {
       provider: 'soundcloud',
-      src: `https://w.soundcloud.com/player/?url=${encodeURIComponent(clean)}&visual=false`,
+      src: `https://w.soundcloud.com/player/?url=${encodeURIComponent(clean)}&visual=false&auto_play=true`,
       height: 166,
     }
   }
