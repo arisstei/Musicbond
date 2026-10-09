@@ -71,6 +71,22 @@ export function RoomView({ userId, username, visitUserId = null, onVisit, onHome
     latest.current = { room, local, dirty, visiting }
   })
 
+  // Αυτόματη αποθήκευση στη βάση ~1,2s μετά την τελευταία αλλαγή.
+  useEffect(() => {
+    if (!dirty || visiting || !room) return undefined
+    const timer = setTimeout(async () => {
+      try {
+        await saveRoom(room, local)
+        // Αν στο μεταξύ έγινε νεότερη αλλαγή, μένει «dirty» και θα ξαναστείλει.
+        if (latest.current.room === room) setDirty(false)
+        setStatus(local ? 'Αποθηκεύτηκε τοπικά στον browser.' : 'Αποθηκεύτηκε.')
+      } catch (err) {
+        setStatus(`Δεν αποθηκεύτηκε: ${err.message}`)
+      }
+    }, 1200)
+    return () => clearTimeout(timer)
+  }, [room, dirty, local, visiting])
+
   // Κλείσιμο/ανανέωση καρτέλας με μη αποθηκευμένες αλλαγές: ρωτάει ο browser.
   useEffect(() => {
     const onBeforeUnload = (e) => {
@@ -206,11 +222,11 @@ export function RoomView({ userId, username, visitUserId = null, onVisit, onHome
         <p className="room-note">
           Τοπική λειτουργία: ο πίνακας <code>rooms</code> δεν υπάρχει ακόμα στο Supabase
           (τρέξε το <code>sql/004_rooms.sql</code>). Το δωμάτιο αποθηκεύεται μόνο σε αυτόν τον
-          browser και δεν μπορούν να το επισκεφτούν άλλοι.
+          browser και δεν θα το δεις από άλλο PC ή browser μέχρι να τρέξεις το SQL.
         </p>
       )}
       {dirty && canEdit && !status && (
-        <p className="room-status">Έχεις μη αποθηκευμένες αλλαγές (αποθηκεύονται αυτόματα όταν φύγεις).</p>
+        <p className="room-status">Αποθηκεύεται...</p>
       )}
       {status && <p className="room-status">{status}</p>}
 

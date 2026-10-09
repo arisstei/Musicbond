@@ -176,10 +176,14 @@ export async function loadRoom(userId, username) {
   }
   if (error) throw error
   if (!data) {
-    return {
-      local: false,
-      room: { userId, username, layout: defaultLayout(), nowPlaying: '', visibility: 'private' },
-    }
+    // Πρώτη φορά στη βάση: αν υπάρχει δωμάτιο που φτιάχτηκε τοπικά (πριν υπάρξει ο
+    // πίνακας), το περνάμε στη βάση ώστε να μη χαθεί και να το βλέπεις από κάθε PC.
+    const saved = readLocal(userId)
+    const room = saved
+      ? { ...saved, username, layout: sanitizeLayout(saved.layout) }
+      : { userId, username, layout: defaultLayout(), nowPlaying: '', visibility: 'private' }
+    if (saved) await saveRoom(room, false)
+    return { local: false, room }
   }
   // Το username στον πίνακα είναι snapshot: ανανεώνεται με το τωρινό στην επόμενη αποθήκευση.
   return { local: false, room: { ...normalize(data), username } }
