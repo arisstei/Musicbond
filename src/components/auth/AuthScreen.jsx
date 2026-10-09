@@ -2,16 +2,25 @@ import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { Panel } from '../ui/Panel'
 import { Button } from '../ui/Button'
+import { PasswordField } from './PasswordField'
 
 // Καθαρή, νέα οθόνη login/signup — retro zine στυλ (βλ. DESIGN_BIBLE.md).
 // Αντικαθιστά το παλιό LoginScreen.jsx (μένει αχρησιμοποίητο στο repo).
 export function AuthScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isSignUp, setIsSignUp] = useState(false)
+  const [mode, setMode] = useState('signin') // 'signin' | 'signup' | 'forgot'
+  const isSignUp = mode === 'signup'
+  const isForgot = mode === 'forgot'
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [info, setInfo] = useState(null)
+
+  const switchMode = (next) => {
+    setMode(next)
+    setError(null)
+    setInfo(null)
+  }
 
   const handleAuth = async (e) => {
     e.preventDefault()
@@ -20,11 +29,17 @@ export function AuthScreen() {
     setInfo(null)
 
     try {
-      if (isSignUp) {
+      if (isForgot) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin,
+        })
+        if (error) throw error
+        setInfo('Αν υπάρχει λογαριασμός με αυτό το email, σου στείλαμε link για νέο κωδικό.')
+      } else if (isSignUp) {
         const { error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
         setInfo('Έλεγξε το email σου για επιβεβαίωση λογαριασμού.')
-        setIsSignUp(false)
+        setMode('signin')
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
@@ -47,9 +62,11 @@ export function AuthScreen() {
           <h1 className="glitch" data-text="Musicbond" style={title}>Musicbond</h1>
         </div>
         <p style={subtitle}>
-          {isSignUp
-            ? 'Φτιάξε λογαριασμό και έλα να μιλήσουμε για μουσική.'
-            : 'Μπες μέσα, η κοινότητα σε περιμένει.'}
+          {isForgot
+            ? 'Γράψε το email σου και θα σου στείλουμε link για νέο κωδικό.'
+            : isSignUp
+              ? 'Φτιάξε λογαριασμό και έλα να μιλήσουμε για μουσική.'
+              : 'Μπες μέσα, η κοινότητα σε περιμένει.'}
         </p>
 
         <form onSubmit={handleAuth} autoComplete="off">
@@ -64,39 +81,44 @@ export function AuthScreen() {
             required
           />
 
-          <label htmlFor="password" style={label}>Κωδικός</label>
-          <input
-            id="password"
-            type="password"
-            style={input}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            minLength={6}
-            required
-          />
+          {!isForgot && (
+            <>
+              <label htmlFor="password" style={label}>Κωδικός</label>
+              <PasswordField
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                style={input}
+              />
+            </>
+          )}
 
           <Button type="submit" variant="primary" disabled={loading} style={{ width: '100%', marginTop: 4 }}>
             {loading
-              ? (isSignUp ? 'Δημιουργία...' : 'Σύνδεση...')
-              : (isSignUp ? 'Εγγραφή' : 'Σύνδεση')}
+              ? (isForgot ? 'Αποστολή...' : isSignUp ? 'Δημιουργία...' : 'Σύνδεση...')
+              : (isForgot ? 'Στείλε link' : isSignUp ? 'Εγγραφή' : 'Σύνδεση')}
           </Button>
         </form>
 
         {error && <div style={errorStyle}>{error}</div>}
         {info && !error && <div style={infoStyle}>{info}</div>}
 
+        {mode === 'signin' && (
+          <div style={toggleText}>
+            <span style={toggleLink} onClick={() => switchMode('forgot')}>
+              Ξέχασα τον κωδικό
+            </span>
+          </div>
+        )}
+
         <div style={toggleText}>
-          {isSignUp ? 'Έχεις ήδη λογαριασμό;' : 'Δεν έχεις λογαριασμό;'}
+          {isForgot ? 'Το θυμήθηκες;' : isSignUp ? 'Έχεις ήδη λογαριασμό;' : 'Δεν έχεις λογαριασμό;'}
           <span
             style={toggleLink}
-            onClick={() => {
-              setIsSignUp((v) => !v)
-              setError(null)
-              setInfo(null)
-            }}
+            onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')}
           >
-            {isSignUp ? 'Σύνδεση' : 'Εγγραφή'}
+            {mode === 'signin' ? 'Εγγραφή' : 'Σύνδεση'}
           </span>
         </div>
       </Panel>

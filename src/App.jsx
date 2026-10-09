@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabaseClient'
 import { AuthScreen } from './components/auth/AuthScreen'
+import { ResetPasswordScreen } from './components/auth/ResetPasswordScreen'
 import { ProfileSetup } from './components/profile/ProfileSetup'
 import { ChatApp } from './components/chat/ChatApp'
 
@@ -11,6 +12,7 @@ function App() {
   const [session, setSession] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [recovering, setRecovering] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -24,7 +26,8 @@ function App() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true)
       setSession(session)
       if (session) {
         setLoading(true)
@@ -81,6 +84,10 @@ function App() {
 
   if (!session) {
     return <AuthScreen />
+  }
+
+  if (recovering) {
+    return <ResetPasswordScreen onDone={() => setRecovering(false)} />
   }
 
   if (!profile || !profile.username) {
