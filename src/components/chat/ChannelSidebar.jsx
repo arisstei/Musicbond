@@ -5,6 +5,8 @@ export function ChannelSidebar({
   activeChannelId,
   onSelect,
   onOpenStory,
+  onOpenRoom,
+  roomActive,
   storyError,
   username,
   onLogout,
@@ -31,6 +33,12 @@ export function ChannelSidebar({
       </div>
 
       <nav className="channel-list">
+        <button
+          className={`channel-tab${roomActive ? ' active' : ''}`}
+          onClick={onOpenRoom}
+        >
+          🏠 Το δωμάτιό μου
+        </button>
         <p className="sidebar-section">Κανάλια</p>
         {channels.map((ch) => (
           <button

@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabaseClient'
 import { fetchStories, openStoryChannel, takePendingStory } from '../../lib/stories'
 import { ChannelSidebar } from './ChannelSidebar'
 import { ChatWindow } from './ChatWindow'
+import { RoomView } from '../room/RoomView'
 
 export function ChatApp({ userId, username }) {
   const [channels, setChannels] = useState([])
@@ -11,6 +12,8 @@ export function ChatApp({ userId, username }) {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
   const [storyError, setStoryError] = useState(null)
+  const [view, setView] = useState('chat') // 'chat' | 'room'
+  const [visitUserId, setVisitUserId] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -57,8 +60,19 @@ export function ChatApp({ userId, username }) {
     }
   }, [])
 
+  const handleSelectChannel = (id) => {
+    setView('chat')
+    setActiveChannelId(id)
+  }
+
+  const handleOpenRoom = (ownerId = null) => {
+    setVisitUserId(ownerId)
+    setView('room')
+  }
+
   const handleOpenStory = async (story) => {
     setStoryError(null)
+    setView('chat')
     const existing = channels.find((c) => c.story_slug === story.slug)
     if (existing) {
       setActiveChannelId(existing.id)
@@ -100,14 +114,25 @@ export function ChatApp({ userId, username }) {
         channels={channels.filter((c) => c.kind !== 'story')}
         stories={stories}
         storyChannels={channels.filter((c) => c.kind === 'story')}
-        activeChannelId={activeChannelId}
-        onSelect={setActiveChannelId}
+        activeChannelId={view === 'room' ? null : activeChannelId}
+        onSelect={handleSelectChannel}
+        onOpenRoom={() => handleOpenRoom(null)}
+        roomActive={view === 'room'}
         onOpenStory={handleOpenStory}
         storyError={storyError}
         username={username}
         onLogout={handleLogout}
       />
-      {activeChannel && (
+      {view === 'room' && (
+        <RoomView
+          userId={userId}
+          username={username}
+          visitUserId={visitUserId}
+          onVisit={handleOpenRoom}
+          onHome={() => handleOpenRoom(null)}
+        />
+      )}
+      {view === 'chat' && activeChannel && (
         <ChatWindow
           key={activeChannel.id}
           channel={activeChannel}
