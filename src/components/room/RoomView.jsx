@@ -319,7 +319,7 @@ export function RoomView({ userId, username, visitUserId = null, onVisit, onHome
         </section>
       )}
 
-      {!local && <JamPanel ownerUserId={visiting ? visitUserId : userId} />}
+      {!local && <JamPanel ownerUserId={visiting ? visitUserId : userId} jamSecret={room.jamSecret} />}
 
       {embed && (
         <section className="room-player">

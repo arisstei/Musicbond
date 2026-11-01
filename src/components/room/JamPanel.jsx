@@ -3,11 +3,11 @@ import { SONOBUS_DOWNLOAD, buildSonobusUrl, jamGroupName } from '../../lib/jam'
 
 // Κουμπί «Jam»: ανοίγει το SonoBus στην ομάδα του δωματίου. Ο ιδιοκτήτης και
 // οι επισκέπτες μπαίνουν στην ίδια ομάδα και παίζουν peer-to-peer.
-export function JamPanel({ ownerUserId }) {
+export function JamPanel({ ownerUserId, jamSecret = null }) {
   const [password, setPassword] = useState('')
 
-  const group = jamGroupName(ownerUserId)
-  const url = buildSonobusUrl({ ownerUserId, password })
+  const group = jamGroupName(ownerUserId, jamSecret)
+  const url = buildSonobusUrl({ ownerUserId, jamSecret, password })
 
   return (
     <section className="room-panel">

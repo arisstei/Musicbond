@@ -158,6 +158,8 @@ function normalize(row) {
     layout: sanitizeLayout(row.layout),
     nowPlaying: row.now_playing ?? '',
     visibility: row.visibility === 'public' ? 'public' : 'private',
+    // Μυστικό Jam: υπάρχει μόνο αφού τρέξει το sql/005 (αλλιώς undefined).
+    jamSecret: row.jam_secret ?? null,
   }
 }
 
