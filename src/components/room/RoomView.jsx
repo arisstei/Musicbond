@@ -10,6 +10,7 @@ import {
   parseMusicLink,
   saveRoom,
 } from '../../lib/rooms'
+import { JamPanel } from './JamPanel'
 import { RoomScene } from './RoomScene'
 
 // Προφίλ-δωμάτιο: το δωμάτιο του χρήστη (επεξεργάσιμο) ή ξένο δημόσιο δωμάτιο
@@ -317,6 +318,8 @@ export function RoomView({ userId, username, visitUserId = null, onVisit, onHome
           {linkError && <p className="room-error">{linkError}</p>}
         </section>
       )}
+
+      {!local && <JamPanel ownerUserId={visiting ? visitUserId : userId} />}
 
       {embed && (
         <section className="room-player">
